@@ -6,10 +6,16 @@ app.use(cors());
 
 app.get('/stock/:symbol', async (req, res) => {
   const { symbol } = req.params;
-  const url = `https://apipubaws.tcbs.com.vn/stock-insight/v1/stock/bars-long-term?ticker=${symbol}&type=stock&resolution=D&countBack=100`;
+  const to = Math.floor(Date.now() / 1000);
+  const from = to - 60 * 60 * 24 * 120;
+  const url = `https://trading.vietcap.com.vn/api/chart/OHLCBars?tickerSymbol=${symbol}&fromDate=${from}&toDate=${to}&resolution=D`;
   try {
     const r = await axios.get(url, {
-      headers: { Referer: 'https://tcinvest.tcbs.com.vn/' }
+      headers: {
+        'User-Agent': 'Mozilla/5.0',
+        'Origin': 'https://trading.vietcap.com.vn',
+        'Referer': 'https://trading.vietcap.com.vn/'
+      }
     });
     res.json(r.data);
   } catch (e) {
